@@ -1,0 +1,98 @@
+.header-container {
+  display: flex;
+  width: $max_width;
+  background: $theme-color;
+  position: fixed;
+  z-index: 1;
+  height: 9%;
+  //color: #193d87;
+  .nav-link {
+    height: 100%;
+    align-items: center;
+    display: flex;
+    font-weight: 700;
+    color: #193d87;
+  }
+  .right-side {
+    height: 100%;
+    align-items: center;
+    display: flex;
+    font-weight: 700;
+    margin: 0 0 0 auto;
+    .welcome-user {
+      background-image: linear-gradient(to right, #78b4ac, #9aa2a2);
+      box-shadow: 4px 0px 16px 0px cadetblue;
+      border-radius: 10px;
+      border: 1px solid #329898;
+      padding: 10px;
+      width: 100%;
+      color: #193d87;
+    }
+    .dropdown {
+      position: relative;
+      display: inline-block;
+      .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        min-width: 180px;
+        background: #fff;
+        border-radius: 8px;
+        padding: 8px 0;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.2s ease;
+        z-index: 1000;
+      }
+      .dropdown-menu.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+      /* Dropdown items */
+      .dropdown-item {
+        display: block;
+        padding: 10px 16px;
+        font-size: 14px;
+        color: #333;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .dropdown-item:hover {
+        background-color: #f5f5f5;
+      }
+
+      /* Divider */
+      .dropdown-divider {
+        height: 1px;
+        margin: 6px 0;
+        background-color: #e5e5e5;
+        border: none;
+      }
+
+      /* Danger item */
+      .dropdown-item.text-danger {
+        color: #dc3545;
+      }
+
+      .dropdown-item.text-danger:hover {
+        background-color: #fdecea;
+      }
+    }
+  }
+}
+
+.footer {
+ // position: absolute;
+  bottom: 0;
+  padding: 3px;
+  width: 100%;
+  background: cadetblue;
+  text-align: center;
+  color: #193d87;
+}
+
+
