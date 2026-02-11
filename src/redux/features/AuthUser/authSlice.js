@@ -4,7 +4,6 @@ import { hangeGetUserDetails } from "../profile/ProfileSlice";
 
 const initialState = {
   accessToken: sessionStorage.getItem("auth-token") || null,
-  refreshToken:  sessionStorage.getItem("refresh-token") || null,
   isSessionExpired: false,
   user: null,
 };
@@ -14,26 +13,22 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setCredentials: (state, action) => {
-      const { accessToken, refreshToken, user } = action.payload;
+      const { accessToken, user } = action.payload;
       state.accessToken = accessToken;
-      state.refreshToken = refreshToken;
       state.user = user;
       sessionStorage.setItem("auth-token", accessToken);
-      sessionStorage.setItem("refresh-token", refreshToken);
     },
     logoutAction: (state) => {
       state.accessToken = null;
-      state.refreshToken = null;
       state.user = null;
       state.isSessionExpired = false;
-      sessionStorage.clear();
+       sessionStorage.removeItem("auth-token");
     },
     sessionExpired: (state) => {
       state.accessToken = null;
-      state.refreshToken = null;
       state.user = null;
       state.isSessionExpired = true;
-      sessionStorage.clear();
+      sessionStorage.removeItem("auth-token");
     },
     resetSession: (state) => {
        state.isSessionExpired = false;

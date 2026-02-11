@@ -111,8 +111,8 @@ export const LoginRegistrationPage = () => {
           loginUser({ emailId: fields.emailId, password: fields.password }),
         );
         if (rest && rest.meta.requestStatus === "fulfilled") {
-          const { accessToken, refreshToken, user } = rest.payload;
-          dispatch(setCredentials({ accessToken, refreshToken, user }));
+          const { accessToken, user } = rest.payload;
+          dispatch(setCredentials({ accessToken, user }));
           navigate("/profile");
         }
       }

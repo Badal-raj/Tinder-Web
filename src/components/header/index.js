@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { logoutAction } from "../../redux/features/AuthUser/authSlice";
+import { logoutUser } from "../../utills/logOut";
 import { AvatarImg } from "../../constant/images";
 
 const profileIconMenus = [
@@ -34,8 +35,9 @@ export const Header = ({ isAuth }) => {
     setOpen((prev) => !prev);
   };
 
-  const handleLogOut = () => {
-    dispatch(logoutAction());
+  const handleLogOut = async() => {
+    await logoutUser() // backend logout
+    dispatch(logoutAction()); // frontend logout
     setOpen(false);
     navigate("/");
   };
