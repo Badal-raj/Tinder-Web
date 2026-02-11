@@ -8,10 +8,8 @@ import { logoutUser } from "./utills/logOut";
 
 function App() {
   const dispatch = useDispatch();
-   const navigate = useNavigate();
+  const navigate = useNavigate();
   const isExpired = useSelector((state) => state.authReducer.isSessionExpired);
-
-  console.log("isExpired", isExpired)
 
   const handleModalClose =async () =>{
      await logoutUser() // backend logout
