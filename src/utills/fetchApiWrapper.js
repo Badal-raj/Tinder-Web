@@ -1,5 +1,3 @@
-
-
 import {
   setCredentials,
   sessionExpired,
@@ -8,10 +6,16 @@ import {
 let isRefreshing = false;
 let refreshQueue = [];
 
+ /******Resolve or reject all queued requests******/
 const processQueue = (error, token = null) => {
-  refreshQueue.forEach((p) =>
-    error ? p.reject(error) : p.resolve(token)
-  );
+  refreshQueue.forEach((promise) => {
+    if (error) {
+      promise.reject(error);
+    } else {
+      promise.resolve(token);
+    }
+  });
+
   refreshQueue = [];
 };
 
@@ -27,10 +31,11 @@ export const ApiFetch = async (url, options = {}, thunkAPI) => {
     ...options.headers,
   });
 
+  /********FIRST API CALL*************/
   let response = await fetch(url, {
     ...options,
+    credentials: "include", // IMPORTANT for cookie
     headers: makeHeaders(accessToken),
-    credentials: "include", // 🔥 REQUIRED for cookies
   });
 
   let data = {};
@@ -38,67 +43,79 @@ export const ApiFetch = async (url, options = {}, thunkAPI) => {
     data = await response.json();
   } catch (_) {}
 
-  if (response.ok) return data;
+  // If request successful → return data
+  if (response.ok) {
+    return data;
+  }
 
-  /* 🔐 ACCESS TOKEN EXPIRED */
-  if (response.status === 401) {
+  /*****HANDLE ACCESS TOKEN EXPIRY******/
+  if (
+    response.status === 401 &&
+    !url.includes("/refresh-token") // prevent infinite loop
+  ) {
+    // If refresh already in progress → queue this request
     if (isRefreshing) {
       return new Promise((resolve, reject) => {
         refreshQueue.push({ resolve, reject });
-      }).then((newToken) =>
-        fetch(url, {
+      }).then((newAccessToken) => {
+        return fetch(url, {
           ...options,
-          headers: makeHeaders(newToken),
           credentials: "include",
-        }).then(async (r) => {
-          if (!r.ok) throw new Error("Retry failed");
-          return r.json();
-        })
-      );
+          headers: makeHeaders(newAccessToken),
+        }).then(async (res) => {
+          if (!res.ok) throw new Error("Retry failed");
+          return res.json();
+        });
+      });
     }
 
+    // Start refresh process
     isRefreshing = true;
 
     try {
-      const refreshRes = await fetch(
+      const refreshResponse = await fetch(
         "http://localhost:9001/api/refresh-token",
         {
           method: "POST",
-          credentials: "include", // 🍪 cookie auto-sent
-        }
+          credentials: "include", // 🔥 send httpOnly cookie
+        },
       );
 
-      const refreshData = await refreshRes.json();
-      if (!refreshRes.ok) throw new Error("Session expired");
+      // If refresh token expired → logout
+      if (refreshResponse.status === 401 || refreshResponse.status === 403) {
+        throw new Error("Refresh token expired");
+      }
+      const refreshData = await refreshResponse.json();
+      const newAccessToken = refreshData.accessToken;
 
+      // Update Redux with new access token
       dispatch(
         setCredentials({
-          accessToken: refreshData.accessToken,
+          accessToken: newAccessToken,
           user,
-        })
+        }),
       );
-
-      processQueue(null, refreshData.accessToken);
-
-      return fetch(url, {
+      // Resolve queued requests
+      processQueue(null, newAccessToken);
+      // Retry original request
+      const retryResponse = await fetch(url, {
         ...options,
-        headers: makeHeaders(refreshData.accessToken),
         credentials: "include",
-      }).then(async (r) => {
-        if (!r.ok) throw new Error("Retry failed");
-        return r.json();
+        headers: makeHeaders(newAccessToken),
       });
-    } catch (err) {
-      processQueue(err);
-
+      if (!retryResponse.ok) {
+        throw new Error("Retry failed");
+      }
+      return retryResponse.json();
+    } catch (error) {
+      // If refresh fails → logout user globally
+      processQueue(error);
       dispatch(sessionExpired());
-
-      throw err;
+      throw error;
     } finally {
       isRefreshing = false;
     }
   }
-
+  // Other errors
   throw new Error(data.message || "Something went wrong");
 };
-

@@ -18,6 +18,7 @@ export const loginUser = createAsyncThunk(
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(userData),
+          credentials: "include",
         });
   
         if (response && !response.ok) {
