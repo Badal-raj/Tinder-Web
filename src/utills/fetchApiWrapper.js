@@ -2,6 +2,7 @@ import {
   setCredentials,
   sessionExpired,
 } from "../redux/features/AuthUser/authSlice";
+import { handleSendLogoutEvent } from "./authChannel";
 
 let isRefreshing = false;
 let refreshQueue = [];
@@ -111,6 +112,7 @@ export const ApiFetch = async (url, options = {}, thunkAPI) => {
       // If refresh fails → logout user globally
       processQueue(error);
       dispatch(sessionExpired());
+      handleSendLogoutEvent();
       throw error;
     } finally {
       isRefreshing = false;

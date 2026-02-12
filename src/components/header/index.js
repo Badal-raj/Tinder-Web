@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logoutAction } from "../../redux/features/AuthUser/authSlice";
 import { logoutUser } from "../../utills/logOut";
 import { AvatarImg } from "../../constant/images";
+import { handleSendLogoutEvent } from "../../utills/authChannel";
 
 const profileIconMenus = [
   {
@@ -25,7 +26,7 @@ const profileIconMenus = [
 ];
 
 export const Header = ({ isAuth }) => {
-  const userData = useSelector((state)=>state.authReducer?.user);
+  const userData = useSelector((state) => state.authReducer?.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -35,9 +36,10 @@ export const Header = ({ isAuth }) => {
     setOpen((prev) => !prev);
   };
 
-  const handleLogOut = async() => {
-    await logoutUser() // backend logout
+  const handleLogOut = async () => {
+    await logoutUser(); // backend logout
     dispatch(logoutAction()); // frontend logout
+    handleSendLogoutEvent(); //notify other tabs for logout
     setOpen(false);
     navigate("/");
   };
@@ -46,7 +48,9 @@ export const Header = ({ isAuth }) => {
     <div className="header-container">
       <div className="nav-link fw-bold px-3">DevTinder 🔥</div>
       <div className="d-flex right-side px-2 gap-2">
-        <div className="welcome-user">👋 Welcome, {userData?.firstName || "User"}</div>
+        <div className="welcome-user">
+          👋 Welcome, {userData?.firstName || "User"}
+        </div>
         {isAuth && (
           <div className="dropdown">
             <div
@@ -69,11 +73,9 @@ export const Header = ({ isAuth }) => {
                 style={{
                   width: "43px",
                   height: "43px",
-                  // objectFit: "cover",
                   fontSize: "8px",
                   textAlign: "center",
                 }}
-
               />
             </div>
 
