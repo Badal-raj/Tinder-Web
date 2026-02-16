@@ -7,13 +7,13 @@
   position: relative;
   background: #99cccc;
   justify-content: center;
-  padding: 30px;
+  padding: 60px 10px 15px 10px;
   gap: 10px;
   //align-items: center;
   .page-body {
     background: $white;
     min-width: 40%;
-    margin: 40px;
+    // margin: 40px;
     border-radius: 6px;
     .e-comm-style {
       color: $theme-color;

@@ -22,11 +22,11 @@ const authSlice = createSlice({
       state.accessToken = null;
       state.user = null;
       state.isSessionExpired = false;
-       sessionStorage.removeItem("auth-token");
+      sessionStorage.removeItem("auth-token");
     },
     sessionExpired: (state) => {
-      state.accessToken = null;
-      state.user = null;
+      // state.accessToken = null;
+      // state.user = null;
       state.isSessionExpired = true;
       sessionStorage.removeItem("auth-token");
     },

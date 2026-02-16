@@ -1,5 +1,7 @@
 //BroadcastChannel to handle logout from all tab of same window and domain.
 
+//import { logoutAction } from "./redux/features/AuthUser/authSlice";
+
 let authChannel = null;
 
 if ("BroadcastChannel" in window) {

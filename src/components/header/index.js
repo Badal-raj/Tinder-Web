@@ -36,10 +36,14 @@ export const Header = ({ isAuth }) => {
     setOpen((prev) => !prev);
   };
 
+  const handleClosePopup = () => {
+    setOpen(false);
+  };
+
   const handleLogOut = async () => {
     await logoutUser(); // backend logout
-    dispatch(logoutAction()); // frontend logout
     handleSendLogoutEvent(); //notify other tabs for logout
+    dispatch(logoutAction()); // frontend logout
     setOpen(false);
     navigate("/");
   };
@@ -90,6 +94,7 @@ export const Header = ({ isAuth }) => {
                   <Link
                     to={`${item.name.toLocaleLowerCase()}`}
                     className="d-flex justify-content-between dropdown-item"
+                    onClick={handleClosePopup}
                   >
                     {item.name}
                     <span className={`badge rounded-pill ${item.badgeStyle}`}>

@@ -12,23 +12,17 @@ function App() {
   const navigate = useNavigate();
   const isExpired = useSelector((state) => state.authReducer.isSessionExpired);
 
-  const handleUserLogout = async()=>{
-    await logoutUser();
-  }
-
   useEffect(() => {
-    handleUserLogout(); // backend logout
     handleListenLogoutEvent(() => {
       dispatch(logoutAction());
       navigate("/");
     });
-  }, [dispatch]);
+  }, [dispatch, navigate]);
 
-  const handleModalClose = () => {
-    handleUserLogout(); // backend logout
-    dispatch(logoutAction()); // frontend logout
-    handleListenLogoutEvent();
-    navigate("/");
+  const handleModalClose = async() => {
+     await logoutUser(); // backend logout
+     dispatch(logoutAction()); // frontend logout
+     navigate("/");
   };
 
   return (

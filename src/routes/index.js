@@ -5,6 +5,8 @@ import { Profile } from "../pages/profile";
 
 import { ProtectedRoute } from "./ProtectedRoute";
 import { RouteLayout } from "./RouteLayout";
+import { DevConnections } from "../pages/connections";
+import { DevRequests } from "../pages/requests";
 
 
 export const PageRoutes = () => {
@@ -15,6 +17,8 @@ export const PageRoutes = () => {
           <Route path="/" element={<LoginRegistrationPage />} /> 
           <Route element={<ProtectedRoute />}>
             <Route path="/profile" element={<Profile />} />
+             <Route path="/connections" element={<DevConnections />} />
+             <Route path="/requests" element={<DevRequests />} />
           </Route>
         </Route>
       </Routes>
