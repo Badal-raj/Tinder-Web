@@ -1,0 +1,13 @@
+.page-container_dashboard {
+  display: flex;
+  width: $max_width;
+  min-height: 100vh;
+  background-position: center;
+  background-size: cover;
+  position: relative;
+  background: #99cccc;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 10px 15px 10px;
+ 
+}

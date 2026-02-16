@@ -3,17 +3,18 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { ProfilePage } from "./Profile";
 import { emptyFields } from "../../constant/messages";
-import { hangeGetUserDetails } from "../../redux/features/profile/ProfileSlice";
 import { handleUpdateUser } from "../../redux/features/profile/UserEditSlice";
 import { ModalComponent } from "../../components/common";
 import { ProfileView } from "./ProfileView";
+import { setUser } from "../../redux/features/AuthUser/authSlice";
 
 export const Profile = () => {
   const dispatch = useDispatch();
-  const token = useSelector((state) => state.authReducer.accessToken);
   const editPrifleLoading = useSelector(
     (state) => state.updatedUserData.loading,
   );
+
+  const userData = useSelector((state) => state.authReducer.user);
 
   const [fields, setFields] = useState({
     firstName: "",
@@ -71,31 +72,24 @@ export const Profile = () => {
     setFields((prev) => ({ ...prev, [name]: value }));
   };
 
-  const getUserDetail = async () => {
-    try {
-      const result = await dispatch(hangeGetUserDetails());
-      if (result && result.meta.requestStatus === "fulfilled") {
-        const { firstName, lastName, age, gender, skills, about } = result.payload?.result;
-        setFields((prev) => ({
-          ...prev,
-          firstName,
-          lastName,
-          age: age ?? "",
-          gender,
-          skills: skills?.toString() ?? "",
-          about: about ?? "",
-        }));
-      } else {
-        console.log(result.payload?.message);
-      }
-    } catch (error) {
-      console.log(error.messages);
+  const getUserDetail = () => {
+    if (userData) {
+      const { firstName, lastName, age, gender, skills, about } = userData;
+      setFields((prev) => ({
+        ...prev,
+        firstName: firstName || "",
+        lastName: lastName || "",
+        age: age ?? "",
+        gender: gender || "",
+        skills: skills?.toString() || "",
+        about: about || "",
+      }));
     }
   };
 
   useEffect(() => {
     getUserDetail();
-  }, [token]);
+  }, [userData]);
 
   const handleProfileSave = async (e) => {
     e.preventDefault();
@@ -117,7 +111,7 @@ export const Profile = () => {
         const res = await dispatch(handleUpdateUser(formData));
 
         if (res && res.meta.requestStatus === "fulfilled") {
-          console.log("fulfilled--->", res);
+          await dispatch(setUser(res.payload?.result));
         } else {
           console.log("rejected or other ---->", res.payload);
         }

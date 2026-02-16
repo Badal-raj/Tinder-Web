@@ -24,9 +24,10 @@ const authSlice = createSlice({
       state.isSessionExpired = false;
       sessionStorage.removeItem("auth-token");
     },
+    setUser: (state, action) =>{
+       state.user = action.payload;
+    },
     sessionExpired: (state) => {
-      // state.accessToken = null;
-      // state.user = null;
       state.isSessionExpired = true;
       sessionStorage.removeItem("auth-token");
     },
@@ -45,5 +46,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setCredentials, logoutAction, sessionExpired, resetSession } = authSlice.actions;
+export const { setCredentials, logoutAction,setUser, sessionExpired, resetSession } = authSlice.actions;
 export default authSlice.reducer;
